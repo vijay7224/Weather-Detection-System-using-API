@@ -1,16 +1,22 @@
-🌦️ Weather Detection System using API
+🌦️ Weather Forecast Web App
+A simple and responsive Weather Forecasting Web Application built using Flask, HTML, CSS, and OpenWeatherMap API.
+This app allows users to get real-time weather information of any city.
 
-A real-time weather detection web application that fetches live weather data using an API and displays current weather conditions in an interactive interface.
+🚀 Live Demo
+👉https://weather-detection-system.onrender.com
 
-🚀 Features
-🌍 Real-time weather data
-🔍 Search weather by city name
-🌡️ Displays temperature, humidity, wind speed
-☁️ Shows weather conditions (Cloudy, Rainy, Sunny)
-🌐 Interactive UI using Streamlit 
+
+📌 Features
+
+🌍 Search weather by city name
+🌡️ Real-time temperature display
+💧 Humidity and pressure details
+🌬️ Wind speed information
+❌ Error handling for invalid city names
+🎨 Clean and responsive UI
 
 🛠️ Tech Stack
-Programming Language: Python
-Frontend/UI: Streamlit 
-API: OpenWeatherMap API
-Libraries: requests, pandas
+Backend: Python (Flask)
+Frontend: HTML, CSS
+API: OpenWeatherMap
+Deployment: Render
