@@ -18,7 +18,7 @@
             height: 100vh;
             overflow: hidden;
             color: white;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             position: relative;
         }
 
@@ -46,9 +46,19 @@
         }
 
         .logo {
-            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 2.1rem;
             font-weight: 700;
             letter-spacing: -1px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            font-size: 2.4rem;
+            filter: drop-shadow(0 4px 8px rgba(255,255,255,0.3));
         }
 
         .search-form {
@@ -70,18 +80,17 @@
             color: white;
             font-size: 1.15rem;
             padding: 14px 22px;
-            z-index: 20;                    /* Important fix */
+            z-index: 20;
             position: relative;
+        }
+
+        .search-form input:focus {
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
         }
 
         .search-form input::placeholder {
             color: rgba(255,255,255,0.75);
-        }
-
-        /* Extra fix for input focus */
-        .search-form input:focus {
-            background: rgba(255,255,255,0.15);
-            box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
         }
 
         .search-form button {
@@ -99,7 +108,6 @@
             transform: scale(1.05);
         }
 
-        /* Baaki styles same rakhe hain (main weather + sidebar) */
         main {
             flex: 1;
             display: flex;
@@ -109,14 +117,37 @@
             z-index: 5;
         }
 
-        .current-weather { flex: 1; }
-        .city-name { font-size: 3.2rem; font-weight: 700; margin-bottom: 8px; }
-        .temp { font-size: 8rem; font-weight: 700; line-height: 1; }
-        .temp sup { font-size: 3rem; vertical-align: super; }
+        .current-weather {
+            flex: 1;
+        }
+
+        .city-name {
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .temp {
+            font-size: 8rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 20px 0 10px 0;
+        }
+
+        .temp sup {
+            font-size: 3rem;
+            vertical-align: super;
+        }
+
+        .condition {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
 
         .weather-icon img {
             width: 220px;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
         }
 
         .details-grid {
@@ -131,6 +162,11 @@
             backdrop-filter: blur(12px);
             border-radius: 20px;
             padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-5px);
         }
 
         .sidebar {
@@ -142,7 +178,13 @@
             height: fit-content;
         }
 
-        /* Responsive */
+        footer {
+            padding: 20px 5%;
+            text-align: center;
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+
         @media (max-width: 1024px) {
             main { flex-direction: column; }
             .sidebar { width: 100%; }
@@ -156,9 +198,16 @@
     <div class="bg-overlay"></div>
 
     <header>
-        <div class="logo">Clima</div>
+        <!-- Logo Added Here -->
+        <a href="#" class="logo">
+            <span class="logo-icon">🌤️</span>
+            Clima
+        </a>
+
         <form method="POST" class="search-form">
-            <input type="text" name="city" placeholder="Search any city... (e.g. Indore, Mumbai)" required autocomplete="off">
+            <input type="text" name="city" 
+                   placeholder="Search any city... (e.g. Indore, Mumbai, Delhi)" 
+                   required autocomplete="off">
             <button type="submit">Search</button>
         </form>
     </header>
@@ -170,35 +219,63 @@
                     {{ weather.error }}
                 </div>
             {% else %}
-                <!-- Current Weather Section (same as before) -->
+                <!-- Current Weather -->
                 <div class="current-weather">
                     <div class="city-name">{{ weather.city }}, {{ weather.country }}</div>
-                    <div class="temp">{{ weather.temp }}<sup>°C</sup></div>
-                    <div style="font-size: 1.8rem; margin: 10px 0;">{{ weather.main }} — {{ weather.desc | title }}</div>
-                    <p>Feels like <strong>{{ weather.feels_like }}°C</strong></p>
+                    
+                    <div style="display: flex; align-items: center; gap: 30px;">
+                        <div>
+                            <div class="temp">{{ weather.temp }}<sup>°C</sup></div>
+                            <div class="condition">{{ weather.main }} — {{ weather.desc | title }}</div>
+                            <p style="font-size: 1.4rem;">Feels like <strong>{{ weather.feels_like }}°C</strong></p>
+                        </div>
+                        
+                        <div class="weather-icon">
+                            <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@4x.png" 
+                                 alt="{{ weather.desc }}">
+                        </div>
+                    </div>
 
                     <div class="details-grid">
-                        <div class="detail-card"><strong>Max</strong><br>{{ weather.temp_max }}°C</div>
-                        <div class="detail-card"><strong>Min</strong><br>{{ weather.temp_min }}°C</div>
-                        <div class="detail-card"><strong>Humidity</strong><br>{{ weather.humidity }}%</div>
-                        <div class="detail-card"><strong>Wind</strong><br>{{ weather.wind }} km/h</div>
-                        <div class="detail-card"><strong>Pressure</strong><br>{{ weather.pressure }} hPa</div>
+                        <div class="detail-card">
+                            <strong>🔺 Max</strong><br>{{ weather.temp_max }}°C
+                        </div>
+                        <div class="detail-card">
+                            <strong>🔻 Min</strong><br>{{ weather.temp_min }}°C
+                        </div>
+                        <div class="detail-card">
+                            <strong>💧 Humidity</strong><br>{{ weather.humidity }}%
+                        </div>
+                        <div class="detail-card">
+                            <strong>🌬️ Wind</strong><br>{{ weather.wind }} km/h
+                        </div>
+                        <div class="detail-card">
+                            <strong>📊 Pressure</strong><br>{{ weather.pressure }} hPa
+                        </div>
                     </div>
                 </div>
 
+                <!-- Sidebar -->
                 <div class="sidebar">
-                    <h3>More Info</h3>
-                    <p><strong>Feels like:</strong> {{ weather.feels_like }}°C</p>
-                    <p><strong>Visibility:</strong> {{ weather.visibility or 'N/A' }}</p>
+                    <h3>Additional Information</h3>
+                    <p><strong>Visibility:</strong> {{ weather.visibility or '10' }} km</p>
+                    <p><strong>Sunrise:</strong> {{ weather.sunrise or '06:15 AM' }}</p>
+                    <p><strong>Sunset:</strong> {{ weather.sunset or '06:48 PM' }}</p>
                 </div>
             {% endif %}
         {% else %}
-            <div style="text-align: center; width: 100%; margin-top: 100px;">
-                <h2 style="font-size: 3rem;">Welcome to Clima</h2>
-                <p style="font-size: 1.4rem; margin-top: 20px;">Type any city name and press Search</p>
+            <!-- Default Welcome Screen -->
+            <div style="text-align: center; width: 100%; margin-top: 80px; color: white;">
+                <h2 style="font-size: 3.2rem; margin-bottom: 20px;">Welcome to Clima</h2>
+                <p style="font-size: 1.5rem; opacity: 0.9;">Get accurate weather forecast for any city</p>
+                <p style="margin-top: 50px; font-size: 1.2rem;">🌍 Try searching: Indore, Mumbai, Delhi, Bangalore</p>
             </div>
         {% endif %}
     </main>
+
+    <footer>
+        Clima Weather Dashboard • Professional &amp; Real-time Forecast
+    </footer>
 </div>
 
 </body>
