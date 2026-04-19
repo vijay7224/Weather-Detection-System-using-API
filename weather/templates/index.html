@@ -1,8 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Weather App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            outline: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        button {
+            padding: 16px 28px;
+            background: #fff;
+            color: #667eea;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 32px 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        .weather-icon img {
+            width: 140px;
+            height: 140px;
+            margin: 10px 0;
+        }
+
+        .city {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .main-weather {
+            font-size: 1.3rem;
+            color: #555;
+            margin-bottom: 20px;
+            text-transform: capitalize;
+        }
+
+        .temperature {
+            font-size: 3.8rem;
+            font-weight: 600;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .feels-like {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            text-align: left;
+            font-size: 1.05rem;
+        }
+
+        .detail-item {
+            background: rgba(240, 240, 250, 0.7);
+            padding: 14px 18px;
+            border-radius: 16px;
+        }
+
+        .error {
+            background: rgba(255, 255, 255, 0.9);
+            color: #e74c3c;
+            padding: 18px;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .card { padding: 24px 20px; }
+            h1 { font-size: 1.9rem; }
+        }
+    </style>
 </head>
 <body>
 
@@ -10,7 +153,7 @@
     <h1>🌦️ Weather Forecast</h1>
 
     <form method="POST">
-        <input type="text" name="city" placeholder="Enter city name" required>
+        <input type="text" name="city" placeholder="Enter city name (e.g. Indore)" required>
         <button type="submit">Search</button>
     </form>
 
@@ -19,14 +162,39 @@
             <p class="error">{{ weather.error }}</p>
         {% else %}
             <div class="card">
-                <h2>{{ weather.city }}</h2>
-                <p>🌤️ {{ weather.main }} ({{ weather.desc }})</p>
-                <p>🌡️ Temp: {{ weather.temp }} °C</p>
-                <p>🔺 Max: {{ weather.temp_max }} °C</p>
-                <p>🔻 Min: {{ weather.temp_min }} °C</p>
-                <p>💧 Humidity: {{ weather.humidity }}%</p>
-                <p>📊 Pressure: {{ weather.pressure }} hPa</p>
-                <p>🌬️ Wind: {{ weather.wind }} km/h</p>
+                <div class="weather-icon">
+                    <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@4x.png" 
+                         alt="{{ weather.desc }}">
+                </div>
+
+                <h2 class="city">{{ weather.city }}, {{ weather.country }}</h2>
+                <p class="main-weather">{{ weather.main }} — {{ weather.desc | title }}</p>
+
+                <div class="temperature">{{ weather.temp }}°C</div>
+                <p class="feels-like">Feels like {{ weather.feels_like }}°C</p>
+
+                <div class="details">
+                    <div class="detail-item">
+                        <strong>🔺 Max</strong><br>
+                        {{ weather.temp_max }}°C
+                    </div>
+                    <div class="detail-item">
+                        <strong>🔻 Min</strong><br>
+                        {{ weather.temp_min }}°C
+                    </div>
+                    <div class="detail-item">
+                        <strong>💧 Humidity</strong><br>
+                        {{ weather.humidity }}%
+                    </div>
+                    <div class="detail-item">
+                        <strong>🌬️ Wind</strong><br>
+                        {{ weather.wind }} km/h
+                    </div>
+                    <div class="detail-item">
+                        <strong>📊 Pressure</strong><br>
+                        {{ weather.pressure }} hPa
+                    </div>
+                </div>
             </div>
         {% endif %}
     {% endif %}
